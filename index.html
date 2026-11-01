@@ -240,5 +240,6 @@ $('t1').onclick=function(){tab(1)};$('t2').onclick=function(){tab(2)};
 $('dt').value=today();
 render();
 </script>
+<script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')==0){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
 </body>
 </html>
