@@ -96,7 +96,7 @@ input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:
 <div class="card"><div class="hd"><h3>Categories and exercises</h3></div>
 <div class="pair" style="margin:10px 0"><button class="btn ghost" id="addCat">Add category</button><button class="btn" id="addEx">Add exercise</button></div>
 <div id="exlist"></div></div>
-<div class="card"><h3>Backup</h3><p style="color:var(--mute);font-size:14px;margin:6px 0 10px">Download your workouts as a file, or load a backup to move them to another device or browser.</p><button class="btn full" id="shBtn" style="margin:0 0 8px">Share backup (Drive, email, chat)</button><div class="pair"><button class="btn ghost" id="expBtn">Download backup</button><button class="btn ghost" id="impBtn">Import backup</button></div><input type="file" id="impFile" accept=".json,application/json" hidden><div class="msg" id="bmsg"></div></div>
+<div class="card"><h3>Backup</h3><p style="color:var(--mute);font-size:14px;margin:6px 0 10px">Download your workouts as a file, or load a backup to move them to another device or browser.</p><button class="btn full" id="shBtn" style="margin:0 0 8px">Share backup (Drive, email, chat)</button><div class="pair"><button class="btn ghost" id="expBtn">Download backup</button><button class="btn ghost" id="impBtn">Import backup</button></div><input type="file" id="impFile" hidden><div class="msg" id="bmsg"></div></div>
 </section>
 </main>
 <div id="menu"></div>
@@ -223,12 +223,13 @@ $('logBtn').onclick=function(){
   e.logs.push({date:dt,s:s});e.logs.sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0});
   [1,2,3].forEach(function(i){$('r'+i).value=''});save();render();$('msg').textContent='Saved workout #'+n+' for '+e.name+': '+s.join(' / ')+'.';
 };
-$('shBtn').onclick=function(){var txt=JSON.stringify(S,null,1),name='convict-tracker-'+today()+'.json',m=$('bmsg');
-function fail(e){if(!e||e.name!='AbortError')m.textContent='Sharing failed. Try Download backup.'}
-try{var f=new File([txt],name,{type:'application/json'});
-if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'Convict Conditioning backup'}).then(function(){m.textContent='Shared.'}).catch(fail);return}}catch(e){}
-if(navigator.share){navigator.share({title:'Convict Conditioning backup',text:txt}).then(function(){m.textContent='Shared.'}).catch(fail);return}
-m.textContent='Sharing isn’t available here. Use this on the GitHub version.'};
+$('shBtn').onclick=function(){var txt=JSON.stringify(S,null,1),name='convict-tracker-'+today()+'.txt',m=$('bmsg');
+function done(){m.textContent='Shared.'}
+function bad(e){if(e&&e.name=='AbortError')return;m.textContent='Sharing failed'+(e&&e.name?' ('+e.name+')':'')+'. Try Download backup.'}
+function asText(){if(!navigator.share){m.textContent='Sharing isn\u2019t available here. Try Download backup.';return}navigator.share({title:'Convict Conditioning backup',text:txt}).then(done).catch(bad)}
+try{var f=new File([txt],name,{type:'text/plain'});
+if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'Convict Conditioning backup'}).then(done).catch(function(e){if(e&&e.name=='AbortError')return;asText()});return}}catch(e){}
+asText()};
 $('expBtn').onclick=function(){try{var b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='convict-tracker-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();$('bmsg').textContent='Backup downloaded.'}catch(e){$('bmsg').textContent='Download isn’t available here. Open the GitHub version.'}};
 $('impBtn').onclick=function(){$('impFile').click()};
 $('impFile').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var d;try{d=JSON.parse(r.result)}catch(e){}
