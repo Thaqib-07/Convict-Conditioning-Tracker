@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#17181a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CC Tracker">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Convict Conditioning Tracker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#ecebe6;--card:#f7f6f2;--ink:#1d1e20;--mute:#6b6c6f;--line:#d3d1c9;--acc:#1d1e20;--accink:#f7f6f2;--s1:#059669;--s2:#2b50c8;--s3:#dc143c;--danger:#b3261e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--card:#222426;--ink:#ecebe6;--mute:#9a9b9e;--line:#34363a;--acc:#ecebe6;--accink:#17181a;--s1:#34d399;--s2:#5b7fff;--s3:#ff4d6d;--danger:#ff8a80}}
+:root[data-theme="dark"]{--bg:#17181a;--card:#222426;--ink:#ecebe6;--mute:#9a9b9e;--line:#34363a;--acc:#ecebe6;--accink:#17181a;--s1:#34d399;--s2:#5b7fff;--s3:#ff4d6d;--danger:#ff8a80}
+html{color-scheme:light dark;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Barlow,system-ui,sans-serif}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",sans-serif;margin:0;letter-spacing:.01em}
+header{padding:18px 16px 4px;max-width:1200px;margin:auto}
+h1{font-size:34px;line-height:1}
+header p{margin:4px 0 0;color:var(--mute);font-size:14px}
+.tabs{display:flex;gap:6px;padding:12px 16px;max-width:1200px;margin:auto}
+.tabs button{flex:1;padding:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;font:600 16px Barlow,sans-serif}
+.tabs button.on{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.cols{max-width:1200px;margin:auto;padding:0 16px 40px}
+.pane{display:none}.pane.on{display:block}
+h2{font-size:24px;margin:10px 0}
+h3{font-size:21px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.box{position:relative;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;text-align:left;color:inherit;font:inherit;width:100%}
+.box:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+.box .meta{color:var(--mute);font-size:13px;margin-bottom:4px}
+.box.done{opacity:.6}
+.legend{display:flex;gap:12px;font-size:12px;color:var(--mute);margin-bottom:2px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:4px;vertical-align:middle}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--mute);font:11px Barlow,sans-serif}
+.empty{color:var(--mute);font-size:14px;padding:26px 0;text-align:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+label{display:block;font-size:13px;color:var(--mute);margin-bottom:3px}
+input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:16px Barlow,sans-serif}
+.row{display:grid;gap:8px;grid-template-columns:repeat(3,1fr);margin:10px 0}
+.two{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+.btn{padding:10px 14px;border-radius:8px;border:1px solid var(--acc);background:var(--acc);color:var(--accink);font:600 15px Barlow,sans-serif;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.bad{color:var(--danger);border-color:var(--danger);background:transparent}
+.btn.full{width:100%;margin-top:4px}
+.ex{display:flex;align-items:center;gap:6px;padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.ex:first-of-type{border-top:0}
+.ex b{flex:1;min-width:110px;font-weight:600}
+.ex small{color:var(--mute)}
+.ex .btn{padding:6px 10px;font-size:14px}
+.log{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--line);font-size:15px}
+.log button{background:none;border:0;color:var(--mute);font-size:20px;padding:0 6px;cursor:pointer}
+.add{display:flex;gap:8px}
+.sub{margin:18px 0 8px;font-size:18px;color:var(--mute)}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;z-index:20}
+#modal.on{display:flex}
+#modal .sheet{background:var(--bg);width:100%;max-width:760px;max-height:92%;overflow:auto;border-radius:14px 14px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.sheet header{padding:0;display:flex;justify-content:space-between;align-items:center}
+.msg{color:var(--mute);font-size:13px;min-height:18px;margin-top:6px}
+@media(min-width:900px){.tabs{display:none}.cols{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;align-items:start}.pane{display:block!important}#modal{align-items:center}#modal .sheet{border-radius:14px}}
+@media(prefers-reduced-motion:no-preference){.box{transition:border-color .15s}.box:hover{border-color:var(--acc)}}
+.hd{display:flex;justify-content:space-between;align-items:center}
+.dots{background:none;border:0;color:var(--mute);font-size:22px;line-height:1;padding:4px 8px;border-radius:6px;cursor:pointer}
+.dots:hover{color:var(--ink)}
+.cat{margin:18px 0 8px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.wn{font:700 26px "Barlow Condensed",sans-serif;margin:10px 0 0}
+#menu{position:fixed;display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px;z-index:30;min-width:170px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#menu button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--ink);padding:10px 12px;font:15px Barlow,sans-serif;border-radius:6px;cursor:pointer}
+#menu button:hover{background:var(--bg)}
+#menu button.bad{color:var(--danger)}
+.acts{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+</style>
+</head>
+<body>
+<header><h1>Convict Conditioning</h1><p>What’s a man who can’t even keep the promises he made to himself...?</p></header>
+<div class="tabs"><button id="t1" class="on">Progression</button><button id="t2">Input</button></div>
+<main class="cols">
+<section class="pane on" id="p1"><h2>Progression</h2><div id="grid"></div><div id="doneWrap"></div></section>
+<section class="pane" id="p2"><h2>Input</h2>
+<div class="card">
+<div class="pair"><div><label for="csel">Category</label><select id="csel"></select></div><div><label for="sel">Exercise</label><select id="sel"></select></div></div>
+<div class="wn" id="wn"></div>
+<div style="margin-top:10px"><label for="dt">Date</label><input type="date" id="dt"></div>
+<div class="row"><div><label for="r1">Set 1 reps</label><input id="r1" type="number" inputmode="numeric" min="0"></div><div><label for="r2">Set 2 reps</label><input id="r2" type="number" inputmode="numeric" min="0"></div><div><label for="r3">Set 3 reps</label><input id="r3" type="number" inputmode="numeric" min="0"></div></div>
+<button class="btn full" id="logBtn">Save workout</button><div class="msg" id="msg"></div>
+<div id="recent"></div>
+</div>
+<div class="card"><div class="hd"><h3>Categories and exercises</h3></div>
+<div class="pair" style="margin:10px 0"><button class="btn ghost" id="addCat">Add category</button><button class="btn" id="addEx">Add exercise</button></div>
+<div id="exlist"></div></div>
+<div class="card"><h3>Backup</h3><p style="color:var(--mute);font-size:14px;margin:6px 0 10px">Download your workouts as a file, or load a backup to move them to another device or browser.</p><button class="btn full" id="shBtn" style="margin:0 0 8px">Share backup (Drive, email, chat)</button><div class="pair"><button class="btn ghost" id="expBtn">Download backup</button><button class="btn ghost" id="impBtn">Import backup</button></div><input type="file" id="impFile" accept=".json,application/json" hidden><div class="msg" id="bmsg"></div></div>
+</section>
+</main>
+<div id="menu"></div>
+<div id="modal"><div class="sheet" id="sheet"></div></div>
+<script>
+var KEY='cc-tracker-v1',S=null,sel=null,selCat=null,MI=[];
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(S&&S.ex&&!S.cats){S.cats=[{id:'c0',name:'General'}];S.ex.forEach(function(e){e.cat='c0'})}
+if(!S||!S.ex){S={cats:[],ex:[]};[['Push-ups','Wall push-ups'],['Squats','Shoulderstand squats'],['Pull-ups','Vertical pulls'],['Leg raises','Knee tucks']].forEach(function(p,i){S.cats.push({id:'c'+i,name:p[0]});S.ex.push({id:'e'+i,cat:'c'+i,name:p[1],done:false,logs:[]})})}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function $(i){return document.getElementById(i)}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function today(){return new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+function fmt(d){var p=d.split('-');return new Date(p[0],p[1]-1,p[2]).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}
+function E(id){return S.ex.filter(function(x){return x.id==id})[0]}
+function C(id){return S.cats.filter(function(x){return x.id==id})[0]}
+var COL=['var(--s1)','var(--s2)','var(--s3)'];
+function chart(logs,full){
+  if(!logs.length)return '<div class="empty">No workouts logged yet.</div>';
+  var data=full?logs:logs.slice(-15),off=logs.length-data.length;
+  var W=360,H=full?260:200,L=30,R=12,T=10,B=26,vals=[];
+  data.forEach(function(l){vals=vals.concat(l.s)});
+  var mn=Math.max(0,Math.min.apply(null,vals)-1),mx=Math.max.apply(null,vals)+1;
+  var st=Math.max(1,Math.ceil((mx-mn)/5));mx=mn+st*Math.ceil((mx-mn)/st);
+  function X(i){return data.length==1?(L+W-R)/2:L+i*(W-L-R)/(data.length-1)}
+  function Y(v){return T+(mx-v)*(H-T-B)/(mx-mn)}
+  var o='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Repetitions per set by workout">';
+  for(var v=mn;v<=mx;v+=st){o+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="var(--line)"/><text x="'+(L-6)+'" y="'+(Y(v)+4)+'" text-anchor="end">'+v+'</text>'}
+  var every=Math.ceil(data.length/8);
+  data.forEach(function(l,i){if(i%every==0||i==data.length-1)o+='<text x="'+X(i)+'" y="'+(H-8)+'" text-anchor="middle">'+(off+i+1)+'</text>'});
+  for(var k=0;k<3;k++){
+    var pts=data.map(function(l,i){return X(i)+','+Y(l.s[k])}).join(' ');
+    o+='<polyline points="'+pts+'" fill="none" stroke="'+COL[k]+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    data.forEach(function(l,i){o+='<circle cx="'+X(i)+'" cy="'+Y(l.s[k])+'" r="'+(data.length>25?2:3.5)+'" fill="'+COL[k]+'"><title>Workout '+(off+i+1)+' ('+fmt(l.date)+'), set '+(k+1)+': '+l.s[k]+'</title></circle>'});
+  }
+  return o+'</svg>';
+}
+var LEG='<div class="legend"><span><i style="background:var(--s1)"></i>Set 1</span><span><i style="background:var(--s2)"></i>Set 2</span><span><i style="background:var(--s3)"></i>Set 3</span></div>';
+function box(e){var c=C(e.cat);
+  var n=e.logs.length,last=n?e.logs[n-1].s.join(' / '):'none yet';
+  return '<div class="box'+(e.done?' done':'')+'" role="button" tabindex="0" data-open="'+e.id+'"><div class="hd"><h3>'+esc(e.name)+'</h3><button class="dots" data-menu="ex:'+e.id+'" aria-label="Options">&#8942;</button></div><div class="meta">'+(e.done?'✔ Completed · '+(c?esc(c.name)+' · ':''):'')+'Latest: '+last+' · '+n+' workout'+(n==1?'':'s')+(n>15?' · showing last 15':'')+'</div>'+LEG+chart(e.logs,false)+'</div>';
+}
+function render(){
+  var g='';
+  S.cats.forEach(function(c){
+    var xs=S.ex.filter(function(e){return e.cat==c.id&&!e.done});
+    g+='<div class="cat"><h3>'+esc(c.name)+'</h3><button class="dots" data-menu="cat:'+c.id+'" aria-label="Category options">&#8942;</button></div>'+(xs.length?'<div class="grid">'+xs.map(box).join('')+'</div>':'<div class="empty">No active exercises in this category.</div>')});
+  $('grid').innerHTML=S.cats.length?g:'<div class="empty">No categories yet. Add one in Input.</div>';
+  var dn=S.ex.filter(function(e){return e.done});
+  $('doneWrap').innerHTML='<div class="cat" style="margin-top:32px"><h3>Completed ('+dn.length+')</h3></div>'+(dn.length?'<div class="grid">'+dn.map(box).join('')+'</div>':'<div class="empty">Nothing completed yet. Tap the ⋮ on an exercise and choose Mark completed.</div>');
+  var withAct=S.cats.filter(function(c){return S.ex.some(function(e){return e.cat==c.id&&!e.done})});
+  if(!withAct.some(function(c){return c.id==selCat}))selCat=withAct.length?withAct[0].id:null;
+  var xs=S.ex.filter(function(e){return e.cat==selCat&&!e.done});
+  if(!xs.some(function(e){return e.id==sel}))sel=xs.length?xs[0].id:null;
+  $('csel').innerHTML=withAct.map(function(c){return'<option value="'+c.id+'"'+(c.id==selCat?' selected':'')+'>'+esc(c.name)+'</option>'}).join('');
+  $('sel').innerHTML=xs.map(function(e){return'<option value="'+e.id+'"'+(e.id==sel?' selected':'')+'>'+esc(e.name)+'</option>'}).join('');
+  $('logBtn').disabled=!sel;
+  var cur=sel&&E(sel);
+  $('wn').textContent=cur?'Workout #'+(cur.logs.length+1):'Add an exercise to start logging';
+  $('recent').innerHTML=cur&&cur.logs.length?'<h3 class="sub">Recent entries</h3>'+cur.logs.slice(-5).reverse().map(function(l,i){var idx=cur.logs.length-1-i;return'<div class="log"><span>#'+(idx+1)+' · '+fmt(l.date)+' · '+l.s.join(' / ')+'</span><button data-del="'+idx+'" aria-label="Delete entry">&times;</button></div>'}).join(''):'';
+  $('exlist').innerHTML=S.cats.map(function(c){
+    var items=S.ex.filter(function(e){return e.cat==c.id}).map(function(e){return'<div class="ex"><b>'+esc(e.name)+(e.done?' <small>(completed)</small>':'')+'</b><small>'+e.logs.length+' workouts</small><button class="dots" data-menu="ex:'+e.id+'" aria-label="Options">&#8942;</button></div>'}).join('')||'<div class="empty" style="padding:8px 0">No exercises</div>';
+    return'<div class="cat"><h3>'+esc(c.name)+'</h3><button class="dots" data-menu="cat:'+c.id+'" aria-label="Category options">&#8942;</button></div>'+items}).join('');
+}
+function openFull(id){
+  var e=E(id);if(!e)return;
+  var rows=e.logs.slice().reverse().map(function(l,i){return'<div class="log"><span>Workout '+(e.logs.length-i)+' · '+fmt(l.date)+'</span><span>'+l.s.join(' / ')+'</span></div>'}).join('');
+  $('sheet').innerHTML='<header><h2>'+esc(e.name)+'</h2><button class="btn ghost" data-close="1">Close</button></header><div style="color:var(--mute);font-size:13px">All '+e.logs.length+' workouts, from the start</div>'+LEG+chart(e.logs,true)+(rows?'<h3 class="sub">History</h3>'+rows:'');
+  $('modal').classList.add('on');
+}
+function dlg(o){
+  var h='<h2>'+esc(o.title)+'</h2>'+(o.msg?'<p>'+esc(o.msg)+'</p>':'');
+  if(o.input!==undefined)h+='<label for="dI">Name</label><input id="dI" value="'+esc(o.input).replace(/"/g,'&quot;')+'">';
+  if(o.select!==undefined)h+='<div style="margin-top:10px"><label for="dS">Category</label><select id="dS">'+S.cats.map(function(c){return'<option value="'+c.id+'"'+(c.id==o.select?' selected':'')+'>'+esc(c.name)+'</option>'}).join('')+'</select></div>';
+  h+='<div class="acts"><button class="btn ghost" data-close="1">Cancel</button><button class="btn'+(o.bad?' bad':'')+'" id="dOk">'+o.ok+'</button></div>';
+  $('sheet').innerHTML=h;$('modal').classList.add('on');
+  var i=$('dI');if(i)i.focus();
+  $('dOk').onclick=function(){var v=i?i.value.trim():'';if(i&&!v){i.focus();return}$('modal').classList.remove('on');o.cb(v,$('dS')?$('dS').value:null);save();render()};
+  if(i)i.onkeydown=function(e){if(e.key=='Enter')$('dOk').click()};
+}
+function menu(btn,items){
+  MI=items;var m=$('menu');
+  m.innerHTML=items.map(function(it,i){return'<button data-mi="'+i+'"'+(it.bad?' class="bad"':'')+'>'+it.l+'</button>'}).join('');
+  m.style.display='block';var r=btn.getBoundingClientRect();
+  m.style.top=Math.min(r.bottom+4,innerHeight-m.offsetHeight-8)+'px';
+  m.style.left=Math.max(8,Math.min(r.right-m.offsetWidth,innerWidth-m.offsetWidth-8))+'px';
+}
+function exMenu(id){var e=E(id);return[
+  {l:'Rename',fn:function(){dlg({title:'Rename exercise',input:e.name,ok:'Save',cb:function(v){e.name=v}})}},
+  {l:'Change category',fn:function(){dlg({title:'Change category',select:e.cat,ok:'Save',cb:function(v,c){e.cat=c}})}},
+  {l:e.done?'Reopen':'Mark completed',fn:function(){e.done=!e.done;save();render()}},
+  {l:'Remove',bad:1,fn:function(){dlg({title:'Remove exercise',msg:'Remove '+e.name+' and its '+e.logs.length+' logged workouts?',ok:'Remove',bad:1,cb:function(){S.ex=S.ex.filter(function(x){return x.id!=id})}})}}]}
+function catMenu(id){var c=C(id),n=S.ex.filter(function(e){return e.cat==id}).length;return[
+  {l:'Rename',fn:function(){dlg({title:'Rename category',input:c.name,ok:'Save',cb:function(v){c.name=v}})}},
+  {l:'Add exercise here',fn:function(){addEx(id)}},
+  {l:'Remove',bad:1,fn:function(){dlg({title:'Remove category',msg:'Remove '+c.name+(n?' and its '+n+' exercises with all logged workouts?':'?'),ok:'Remove',bad:1,cb:function(){S.cats=S.cats.filter(function(x){return x.id!=id});S.ex=S.ex.filter(function(x){return x.cat!=id})}})}}]}
+function addEx(cat){
+  if(!S.cats.length){dlg({title:'Add a category first',msg:'Exercises live inside a category.',ok:'Add category',cb:function(){addCat()}});return}
+  dlg({title:'Add exercise',input:'',select:cat||selCat||S.cats[0].id,ok:'Add',cb:function(v,c){var id='e'+Date.now();S.ex.push({id:id,cat:c,name:v,done:false,logs:[]});selCat=c;sel=id}});
+}
+function addCat(){dlg({title:'Add category',input:'',ok:'Add',cb:function(v){var id='c'+Date.now();S.cats.push({id:id,name:v})}})}
+document.addEventListener('click',function(ev){
+  var t=ev.target;
+  var mi=t.closest('[data-mi]');if(mi){var it=MI[+mi.dataset.mi];$('menu').style.display='none';it.fn();return}
+  var mb=t.closest('[data-menu]');
+  if(mb){ev.stopPropagation();var p=mb.dataset.menu.split(':');menu(mb,p[0]=='ex'?exMenu(p[1]):catMenu(p[1]));return}
+  $('menu').style.display='none';
+  if(t==$('modal')){$('modal').classList.remove('on');return}
+  var x=t.closest('[data-open],[data-close],[data-del]');if(!x)return;var d=x.dataset;
+  if(d.open)openFull(d.open);
+  else if(d.close)$('modal').classList.remove('on');
+  else if(d.del!==undefined){E(sel).logs.splice(+d.del,1);save();render()}
+});
+document.addEventListener('keydown',function(e){
+  if(e.key=='Escape'){$('modal').classList.remove('on');$('menu').style.display='none'}
+  var b=e.target.closest&&e.target.closest('.box');if(b&&e.target==b&&(e.key=='Enter'||e.key==' ')){e.preventDefault();openFull(b.dataset.open)}
+});
+$('csel').onchange=function(){selCat=this.value;sel=null;render()};
+$('sel').onchange=function(){sel=this.value;render()};
+$('logBtn').onclick=function(){
+  var e=E(sel),s=[1,2,3].map(function(i){return parseInt($('r'+i).value,10)}),dt=$('dt').value;
+  if(!e||!dt||s.some(function(v){return isNaN(v)||v<0})){$('msg').textContent='Enter a date and reps for all three sets.';return}
+  var n=e.logs.length+1;
+  e.logs.push({date:dt,s:s});e.logs.sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0});
+  [1,2,3].forEach(function(i){$('r'+i).value=''});save();render();$('msg').textContent='Saved workout #'+n+' for '+e.name+': '+s.join(' / ')+'.';
+};
+$('shBtn').onclick=function(){var txt=JSON.stringify(S,null,1),name='convict-tracker-'+today()+'.json',m=$('bmsg');
+function fail(e){if(!e||e.name!='AbortError')m.textContent='Sharing failed. Try Download backup.'}
+try{var f=new File([txt],name,{type:'application/json'});
+if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'Convict Conditioning backup'}).then(function(){m.textContent='Shared.'}).catch(fail);return}}catch(e){}
+if(navigator.share){navigator.share({title:'Convict Conditioning backup',text:txt}).then(function(){m.textContent='Shared.'}).catch(fail);return}
+m.textContent='Sharing isn’t available here. Use this on the GitHub version.'};
+$('expBtn').onclick=function(){try{var b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='convict-tracker-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();$('bmsg').textContent='Backup downloaded.'}catch(e){$('bmsg').textContent='Download isn’t available here. Open the GitHub version.'}};
+$('impBtn').onclick=function(){$('impFile').click()};
+$('impFile').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var d;try{d=JSON.parse(r.result)}catch(e){}
+if(!d||!Array.isArray(d.cats)||!Array.isArray(d.ex)){$('bmsg').textContent='That file is not a tracker backup.';return}
+dlg({title:'Import backup',msg:'This replaces the data on this page with the backup ('+d.cats.length+' categories, '+d.ex.length+' exercises). Continue?',ok:'Import',bad:1,cb:function(){S=d;$('bmsg').textContent='Backup imported.'}})};r.readAsText(f);this.value=''};
+$('addCat').onclick=addCat;$('addEx').onclick=function(){addEx()};
+function tab(n){$('p1').classList.toggle('on',n==1);$('p2').classList.toggle('on',n==2);$('t1').classList.toggle('on',n==1);$('t2').classList.toggle('on',n==2)}
+$('t1').onclick=function(){tab(1)};$('t2').onclick=function(){tab(2)};
+$('dt').value=today();
+render();
+</script>
+</body>
+</html>
