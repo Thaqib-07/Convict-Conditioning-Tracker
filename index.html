@@ -77,26 +77,43 @@ input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:
 #menu button.bad{color:var(--danger)}
 .acts{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tgt{font-weight:600;font-size:14px;margin:2px 0 6px}
+:root{--g0:#dcdad2;--g1:#2f6b3f;--g2:#7d9a2f;--g3:#8fd14f;--g4:#39e60f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--g0:#26282b;--g1:#1f5a34;--g2:#6a8a2e;--g3:#82d044;--g4:#39ff14}}
+.cons{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:6px 0 4px;cursor:pointer}
+.cons .meta{color:var(--mute);font-size:13px;margin-bottom:8px}
+.wks{display:flex;gap:3px}
+.wcol{display:flex;flex-direction:column;gap:3px;width:14px;flex:none;align-items:center}
+.sq{width:14px;height:14px;border-radius:3px;background:var(--g0)}
+.lv1{background:var(--g1)}.lv2{background:var(--g2)}.lv3{background:var(--g3)}.lv4{background:var(--g4)}
+.sq.fut{opacity:.35}.sq.today{outline:2px solid var(--ink);outline-offset:-1px}
+.wk{font-size:9px;color:var(--mute);line-height:1;margin-top:2px;white-space:nowrap}
+.scrollx{overflow-x:auto;padding-bottom:8px;margin-top:10px}
+.lgd{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--mute);margin-top:8px}
+.info{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--mute);background:none;color:var(--mute);font:700 14px Barlow,sans-serif;cursor:pointer;padding:0;line-height:1;flex:none}
+.dayinfo{margin-top:10px;font-size:14px}
+.sw{display:inline-block;vertical-align:middle;margin-right:8px}
 </style>
 </head>
 <body>
 <header><h1>Convict Conditioning</h1><p>What’s a man who can’t even keep the promises he made to himself...?</p></header>
 <div class="tabs"><button id="t1" class="on">Progression</button><button id="t2">Input</button></div>
 <main class="cols">
-<section class="pane on" id="p1"><h2>Progression</h2><div id="grid"></div><div id="doneWrap"></div></section>
+<section class="pane on" id="p1"><div class="hd"><h2>Consistency</h2><button class="info" id="cinfo" aria-label="How the consistency grid works">!</button></div><div class="cons" id="cons" role="button" tabindex="0" aria-label="Open consistency grid"></div><h2 style="margin-top:22px">Progression</h2><div id="grid"></div><div id="doneWrap"></div></section>
 <section class="pane" id="p2"><h2>Input</h2>
 <div class="card">
 <div class="pair"><div><label for="csel">Category</label><select id="csel"></select></div><div><label for="sel">Exercise</label><select id="sel"></select></div></div>
-<div class="wn" id="wn"></div>
+<div class="wn" id="wn"></div><div id="std" style="color:var(--mute);font-size:13px;margin-top:2px"></div>
+<div style="margin-top:10px"><label for="tg">Target reps (your best set goal)</label><input id="tg" type="number" inputmode="numeric" min="1" placeholder="e.g. 10"></div>
 <div style="margin-top:10px"><label for="dt">Date</label><input type="date" id="dt"></div>
-<div class="row"><div><label for="r1">Set 1 reps</label><input id="r1" type="number" inputmode="numeric" min="0"></div><div><label for="r2">Set 2 reps</label><input id="r2" type="number" inputmode="numeric" min="0"></div><div><label for="r3">Set 3 reps</label><input id="r3" type="number" inputmode="numeric" min="0"></div></div>
+<div class="row"><div><label for="r1" id="l1">Set 1 reps</label><input id="r1" type="number" inputmode="numeric" min="0"></div><div><label for="r2" id="l2">Set 2 reps</label><input id="r2" type="number" inputmode="numeric" min="0"></div><div><label for="r3" id="l3">Set 3 reps</label><input id="r3" type="number" inputmode="numeric" min="0"></div></div>
 <button class="btn full" id="logBtn">Save workout</button><div class="msg" id="msg"></div>
 <div id="recent"></div>
 </div>
 <div class="card"><div class="hd"><h3>Categories and exercises</h3></div>
-<div class="pair" style="margin:10px 0"><button class="btn ghost" id="addCat">Add category</button><button class="btn" id="addEx">Add exercise</button></div>
+<div class="pair" style="margin:10px 0"><button class="btn ghost" id="addCat">Add category</button><button class="btn" id="addEx">Add exercise</button></div><button class="btn full" id="addCC" style="margin:0 0 10px">Add Convict Conditioning exercise</button>
 <div id="exlist"></div></div>
-<div class="card"><h3>Backup</h3><p style="color:var(--mute);font-size:14px;margin:6px 0 10px">Download your workouts as a file, or load a backup to move them to another device or browser.</p><button class="btn full" id="shBtn" style="margin:0 0 8px">Share backup (Drive, email, chat)</button><div class="pair"><button class="btn ghost" id="expBtn">Download backup</button><button class="btn ghost" id="impBtn">Import backup</button></div><input type="file" id="impFile" hidden><div class="msg" id="bmsg"></div></div>
+<div class="card"><h3>Backup</h3><p style="color:var(--mute);font-size:14px;margin:6px 0 10px">Download your workouts as a file, or load a backup to move them to another device or browser.</p><button class="btn full" id="shBtn" style="margin:0 0 8px">Share backup (Drive, email, chat)</button><div class="pair"><button class="btn ghost" id="expBtn">Download backup</button><button class="btn ghost" id="impBtn">Import backup</button></div><input type="file" id="impFile" hidden><button class="btn bad full" id="clrBtn" style="margin-top:8px">Clear all data</button><div class="msg" id="bmsg"></div></div>
 </section>
 </main>
 <div id="menu"></div>
@@ -114,7 +131,7 @@ function fmt(d){var p=d.split('-');return new Date(p[0],p[1]-1,p[2]).toLocaleDat
 function E(id){return S.ex.filter(function(x){return x.id==id})[0]}
 function C(id){return S.cats.filter(function(x){return x.id==id})[0]}
 var COL=['var(--s1)','var(--s2)','var(--s3)'];
-function chart(logs,full){
+function chart(logs,full,target){
   if(!logs.length)return '<div class="empty">No workouts logged yet.</div>';
   var data=full?logs:logs.slice(-15),off=logs.length-data.length;
   var W=360,H=full?260:200,L=30,R=12,T=10,B=26,vals=[];
@@ -137,13 +154,13 @@ function chart(logs,full){
 var LEG='<div class="legend"><span><i style="background:var(--s1)"></i>Set 1</span><span><i style="background:var(--s2)"></i>Set 2</span><span><i style="background:var(--s3)"></i>Set 3</span></div>';
 function box(e){var c=C(e.cat);
   var n=e.logs.length,last=n?e.logs[n-1].s.join(' / '):'none yet';
-  return '<div class="box'+(e.done?' done':'')+'" role="button" tabindex="0" data-open="'+e.id+'"><div class="hd"><h3>'+esc(e.name)+'</h3><button class="dots" data-menu="ex:'+e.id+'" aria-label="Options">&#8942;</button></div><div class="meta">'+(e.done?'✔ Completed · '+(c?esc(c.name)+' · ':''):'')+'Latest: '+last+' · '+n+' workout'+(n==1?'':'s')+(n>15?' · showing last 15':'')+'</div>'+LEG+chart(e.logs,false)+'</div>';
+  return '<div class="box'+(e.done?' done':'')+'" role="button" tabindex="0" data-open="'+e.id+'"><div class="hd"><h3>'+esc(e.name)+'</h3><button class="dots" data-menu="ex:'+e.id+'" aria-label="Options">&#8942;</button></div><div class="meta">'+(e.done?'✔ Completed · '+(c?esc(c.name)+' · ':''):'')+(e.step?'Step '+e.step+' \u00b7 ':'')+'Latest: '+last+' · '+n+' workout'+(n==1?'':'s')+(n>15?' · showing last 15':'')+'</div>'+(e.target?'<div class="tgt">Target: '+e.target+' reps</div>':'')+LEG+chart(e.logs,false)+'</div>';
 }
 function render(){
   var g='';
   S.cats.forEach(function(c){
     var xs=S.ex.filter(function(e){return e.cat==c.id&&!e.done});
-    g+='<div class="cat"><h3>'+esc(c.name)+'</h3><button class="dots" data-menu="cat:'+c.id+'" aria-label="Category options">&#8942;</button></div>'+(xs.length?'<div class="grid">'+xs.map(box).join('')+'</div>':'<div class="empty">No active exercises in this category.</div>')});
+    g+='<div class="cat"><h3>'+esc(c.name)+(c.key?' Progression':'')+'</h3><button class="dots" data-menu="cat:'+c.id+'" aria-label="Category options">&#8942;</button></div>'+(xs.length?'<div class="grid">'+xs.map(box).join('')+'</div>':'<div class="empty">No active exercises in this category.</div>')});
   $('grid').innerHTML=S.cats.length?g:'<div class="empty">No categories yet. Add one in Input.</div>';
   var dn=S.ex.filter(function(e){return e.done});
   $('doneWrap').innerHTML='<div class="cat" style="margin-top:32px"><h3>Completed ('+dn.length+')</h3></div>'+(dn.length?'<div class="grid">'+dn.map(box).join('')+'</div>':'<div class="empty">Nothing completed yet. Tap the ⋮ on an exercise and choose Mark completed.</div>');
@@ -155,26 +172,31 @@ function render(){
   $('sel').innerHTML=xs.map(function(e){return'<option value="'+e.id+'"'+(e.id==sel?' selected':'')+'>'+esc(e.name)+'</option>'}).join('');
   $('logBtn').disabled=!sel;
   var cur=sel&&E(sel);
+  $('tg').value=cur&&cur.target?cur.target:'';$('tg').disabled=!cur;
   $('wn').textContent=cur?'Workout #'+(cur.logs.length+1):'Add an exercise to start logging';
+  var st=cur&&std(cur),u=cur?unitOf(cur):'reps';
+  $('std').textContent=st?'Beginner '+fs(st[1])+' \u00b7 Intermediate '+fs(st[2])+' \u00b7 Progression '+fs(st[3])+(u=='seconds'?' (seconds)':''):'';
+  [1,2,3].forEach(function(i){$('l'+i).textContent='Set '+i+' '+u});
   $('recent').innerHTML=cur&&cur.logs.length?'<h3 class="sub">Recent entries</h3>'+cur.logs.slice(-5).reverse().map(function(l,i){var idx=cur.logs.length-1-i;return'<div class="log"><span>#'+(idx+1)+' · '+fmt(l.date)+' · '+l.s.join(' / ')+'</span><button data-del="'+idx+'" aria-label="Delete entry">&times;</button></div>'}).join(''):'';
   $('exlist').innerHTML=S.cats.map(function(c){
-    var items=S.ex.filter(function(e){return e.cat==c.id}).map(function(e){return'<div class="ex"><b>'+esc(e.name)+(e.done?' <small>(completed)</small>':'')+'</b><small>'+e.logs.length+' workouts</small><button class="dots" data-menu="ex:'+e.id+'" aria-label="Options">&#8942;</button></div>'}).join('')||'<div class="empty" style="padding:8px 0">No exercises</div>';
-    return'<div class="cat"><h3>'+esc(c.name)+'</h3><button class="dots" data-menu="cat:'+c.id+'" aria-label="Category options">&#8942;</button></div>'+items}).join('');
+    var items=S.ex.filter(function(e){return e.cat==c.id}).map(function(e){return'<div class="ex"><b>'+esc(e.name)+(e.done?' <small>(completed)</small>':'')+'</b><small>'+e.logs.length+(e.logs.length==1?' workout':' workouts')+'</small><button class="dots" data-menu="ex:'+e.id+'" aria-label="Options">&#8942;</button></div>'}).join('')||'<div class="empty" style="padding:8px 0">No exercises</div>';
+    return'<div class="cat"><h3>'+esc(c.name)+(c.key?' Progression':'')+'</h3><button class="dots" data-menu="cat:'+c.id+'" aria-label="Category options">&#8942;</button></div>'+items}).join('');
 }
 function openFull(id){
   var e=E(id);if(!e)return;
   var rows=e.logs.slice().reverse().map(function(l,i){return'<div class="log"><span>Workout '+(e.logs.length-i)+' · '+fmt(l.date)+'</span><span>'+l.s.join(' / ')+'</span></div>'}).join('');
-  $('sheet').innerHTML='<header><h2>'+esc(e.name)+'</h2><button class="btn ghost" data-close="1">Close</button></header><div style="color:var(--mute);font-size:13px">All '+e.logs.length+' workouts, from the start</div>'+LEG+chart(e.logs,true)+(rows?'<h3 class="sub">History</h3>'+rows:'');
+  $('sheet').innerHTML='<header><h2>'+esc(e.name)+'</h2><button class="btn ghost" data-close="1">Close</button></header><div style="color:var(--mute);font-size:13px">All '+e.logs.length+' workouts, from the start</div>'+(e.target?'<div class="tgt">Target: '+e.target+' reps</div>':'')+LEG+chart(e.logs,true)+(rows?'<h3 class="sub">History</h3>'+rows:'');
   $('modal').classList.add('on');
 }
 function dlg(o){
   var h='<h2>'+esc(o.title)+'</h2>'+(o.msg?'<p>'+esc(o.msg)+'</p>':'');
   if(o.input!==undefined)h+='<label for="dI">Name</label><input id="dI" value="'+esc(o.input).replace(/"/g,'&quot;')+'">';
   if(o.select!==undefined)h+='<div style="margin-top:10px"><label for="dS">Category</label><select id="dS">'+S.cats.map(function(c){return'<option value="'+c.id+'"'+(c.id==o.select?' selected':'')+'>'+esc(c.name)+'</option>'}).join('')+'</select></div>';
+  if(o.opts)h+='<div style="margin-top:10px"><label for="dO">'+(o.optLabel||'Step')+'</label><select id="dO">'+o.opts.map(function(p){return'<option value="'+p[0]+'"'+(p[0]==o.optSel?' selected':'')+'>'+esc(p[1])+'</option>'}).join('')+'</select></div>';
   h+='<div class="acts"><button class="btn ghost" data-close="1">Cancel</button><button class="btn'+(o.bad?' bad':'')+'" id="dOk">'+o.ok+'</button></div>';
   $('sheet').innerHTML=h;$('modal').classList.add('on');
   var i=$('dI');if(i)i.focus();
-  $('dOk').onclick=function(){var v=i?i.value.trim():'';if(i&&!v){i.focus();return}$('modal').classList.remove('on');o.cb(v,$('dS')?$('dS').value:null);save();render()};
+  $('dOk').onclick=function(){var v=i?i.value.trim():'';if(i&&!v){i.focus();return}$('modal').classList.remove('on');o.cb(v,$('dS')?$('dS').value:null,$('dO')?$('dO').value:null);save();render()};
   if(i)i.onkeydown=function(e){if(e.key=='Enter')$('dOk').click()};
 }
 function menu(btn,items){
@@ -204,6 +226,7 @@ document.addEventListener('click',function(ev){
   var mb=t.closest('[data-menu]');
   if(mb){ev.stopPropagation();var p=mb.dataset.menu.split(':');menu(mb,p[0]=='ex'?exMenu(p[1]):catMenu(p[1]));return}
   $('menu').style.display='none';
+  var q=t.closest('[data-day]');if(q&&$('sheet').contains(q)){showDay(q.dataset.day);return}
   if(t==$('modal')){$('modal').classList.remove('on');return}
   var x=t.closest('[data-open],[data-close],[data-del]');if(!x)return;var d=x.dataset;
   if(d.open)openFull(d.open);
@@ -234,10 +257,108 @@ $('expBtn').onclick=function(){try{var b=new Blob([JSON.stringify(S,null,1)],{ty
 $('impBtn').onclick=function(){$('impFile').click()};
 $('impFile').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var d;try{d=JSON.parse(r.result)}catch(e){}
 if(!d||!Array.isArray(d.cats)||!Array.isArray(d.ex)){$('bmsg').textContent='That file is not a tracker backup.';return}
-dlg({title:'Import backup',msg:'This replaces the data on this page with the backup ('+d.cats.length+' categories, '+d.ex.length+' exercises). Continue?',ok:'Import',bad:1,cb:function(){S=d;$('bmsg').textContent='Backup imported.'}})};r.readAsText(f);this.value=''};
+dlg({title:'Import backup',msg:'This replaces the data on this page with the backup ('+d.cats.length+' categories, '+d.ex.length+' exercises). Continue?',ok:'Import',bad:1,cb:function(){S=d;initCC();$('bmsg').textContent='Backup imported.'}})};r.readAsText(f);this.value=''};
+$('tg').onchange=function(){var e=E(sel);if(!e)return;var v=parseInt(this.value,10);if(v>0)e.target=v;else delete e.target;save();render();$('msg').textContent=e.target?'Target for '+e.name+' set to '+e.target+' reps.':'Target removed.'};
+$('clrBtn').onclick=function(){dlg({title:'Clear all data',msg:'This deletes every category, exercise and workout on this device. Download a backup first if you want to keep anything.',ok:'Delete everything',bad:1,cb:function(){S={cats:[],ex:[],v:2};sel=null;selCat=null}})};
 $('addCat').onclick=addCat;$('addEx').onclick=function(){addEx()};
 function tab(n){$('p1').classList.toggle('on',n==1);$('p2').classList.toggle('on',n==2);$('t1').classList.toggle('on',n==1);$('t2').classList.toggle('on',n==2)}
-$('t1').onclick=function(){tab(1)};$('t2').onclick=function(){tab(2)};
+$('t1').onclick=function(){tab(1);renderCons()};$('t2').onclick=function(){tab(2)};
+function dnum(t){var p=t.split('-');return Math.floor(Date.UTC(p[0],p[1]-1,p[2])/864e5)}
+function wstart(d){return d-((d+3)%7)}
+function cdata(){
+  var m={};
+  S.ex.forEach(function(e){var lv=levels(e);e.logs.forEach(function(l,i){var d=dnum(l.date);(m[d]=m[d]||[]).push({n:e.name,l:lv[i],s:l.s})})});
+  var days=Object.keys(m).map(Number),t=dnum(today()),first=days.length?Math.min.apply(null,days):t,end=Math.max(t,days.length?Math.max.apply(null,days):t),w0=wstart(first);
+  return{m:m,t:t,w0:w0,cur:Math.floor((wstart(end)-w0)/7)+1,total:days.length};
+}
+function dl(D,d){var a=D.m[d];return a?Math.max.apply(null,a.map(function(x){return x.l})):0}
+function wcols(D,from,to){
+  var o='';
+  for(var w=from;w<=to;w++){
+    o+='<div class="wcol">';
+    for(var i=0;i<7;i++){
+      var d=D.w0+(w-1)*7+i,lv=dl(D,d),iso=new Date(d*864e5).toISOString().slice(0,10);
+      o+='<div class="sq lv'+lv+(d>D.t?' fut':'')+(d==D.t?' today':'')+'" data-day="'+iso+'" title="'+fmt(iso)+': '+(lv?'Level '+lv:'rest')+'"></div>';
+    }
+    o+='<span class="wk">'+w+'</span></div>';
+  }
+  return o;
+}
+function showDay(iso){
+  var D=cdata(),a=D.m[dnum(iso)];
+  $('dayinfo').innerHTML='<b>'+fmt(iso)+'</b>'+(a?a.map(function(x){return'<div class="log"><span>'+esc(x.n)+' \u00b7 '+x.s.join(' / ')+'</span><span>Level '+x.l+'</span></div>'}).join(''):'<div style="color:var(--mute)">Rest day</div>');
+}
+function infoSheet(){
+  var L=[[0,'No workout (rest day)'],[1,'Workout logged, below the Intermediate standard'],[2,'Intermediate standard met'],[3,'Progression standard met'],[4,'First time you meet the Progression standard on Step 5 or Step 10']];
+  $('sheet').innerHTML='<header><h2>How it works</h2><button class="btn ghost" data-close="1">Close</button></header><div style="margin-top:10px">'+L.map(function(r){return'<div class="log"><span><span class="sq lv'+r[0]+' sw"></span>Level '+r[0]+'</span><span style="text-align:right;max-width:62%">'+r[1]+'</span></div>'}).join('')+'</div><p style="font-size:14px;color:var(--mute)">Each day shows the highest level of the exercises you trained that day. A standard like 2\u00d725 means at least 2 of your sets reached 25. Weeks run Monday to Sunday, and Week 1 is the week of your first workout. Tap the strip to see all weeks, then tap a square for the details of that day.</p>';
+  $('modal').classList.add('on');
+}
+function renderCons(){
+  var c=$('cons');if(!c)return;
+  var D=cdata(),w=(c.clientWidth||innerWidth)-30,n=Math.max(1,Math.floor((w+3)/17)),from=Math.max(1,D.cur-n+1),wk=0;
+  for(var d=D.w0+(D.cur-1)*7;d<D.w0+D.cur*7;d++)if(D.m[d])wk++;
+  c.innerHTML='<div class="meta">Week '+D.cur+' · '+D.total+' training day'+(D.total==1?'':'s')+' in total · '+wk+' this week</div><div class="wks">'+wcols(D,from,D.cur)+'</div>';
+}
+function openCons(){var D=cdata();$('sheet').innerHTML='<header><h2>Consistency</h2><button class="btn ghost" data-close="1">Close</button></header><div class="scrollx" id="scx"><div class="wks">'+wcols(D,1,D.cur)+'</div></div><div id="dayinfo" class="dayinfo"></div>';$('modal').classList.add('on');var x=$('scx');x.scrollLeft=x.scrollWidth}
+$('cons').onclick=openCons;$('cinfo').onclick=infoSheet;
+$('cons').onkeydown=function(e){if(e.key=='Enter'||e.key==' '){e.preventDefault();openCons()}};
+var _render=render;render=function(){_render();renderCons()};
+window.addEventListener('resize',renderCons);
+var CC={
+pu:{n:'Pushups',s:PS(['Wall pushups|1x10|2x25|3x50','Incline pushups|1x10|2x20|3x40','Kneeling pushups|1x10|2x15|3x30','Half pushups|1x8|2x12|2x25','Full pushups|1x5|2x10|2x20','Close pushups|1x5|1x10|2x20','Uneven pushups|1x5|1x10|2x20','Half one-arm pushups|1x5|1x10|2x20','Lever pushups|1x5|1x10|2x20','One-arm pushups|1x5|2x10|2x20'])},
+sq:{n:'Squats',s:PS(['Shoulderstand squats|1x10|2x25|3x50','Jackknife squats|1x10|2x20|3x40','Supported squats|1x10|2x15|3x30','Half squats|1x8|2x35|2x50','Full squats|1x5|2x10|2x30','Close squats|1x5|2x10|2x20','Uneven squats|1x5|2x10|2x20','Half one-leg squats|1x5|2x10|2x20','Assisted one-leg squats|1x5|2x10|2x20','One-leg squats (pistols)|1x5|2x10|2x50'])},
+pl:{n:'Pullups',s:PS(['Vertical pulls|1x10|2x20|3x40','Horizontal pulls|1x10|2x20|3x30','Jackknife pulls|1x10|2x15|3x20','Half pullups|1x8|2x11|2x15','Full pullups|1x5|2x8|2x10','Close pullups|1x5|2x8|2x10','Uneven pullups (each side)|1x5|2x7|2x9','Half one-arm pullups (each side)|1x4|2x6|2x8','Assisted one-arm pullups (each side)|1x3|2x5|2x7','One-arm pullups (each side)|1x1|2x3|2x6'])},
+lr:{n:'Leg raises',s:PS(['Knee tucks|1x10|2x25|3x40','Flat knee raises|1x10|2x20|3x35','Flat bent-leg raises|1x10|2x15|3x30','Flat frog raises|1x8|2x15|3x25','Flat straight-leg raises|1x5|2x10|2x20','Hanging knee raises|1x5|2x10|2x15','Hanging bent-leg raises|1x5|2x10|2x15','Hanging frog raises|1x5|2x10|2x15','Partial straight-leg raises|1x5|2x10|2x15','Hanging straight-leg raises|1x5|2x10|2x30'])},
+br:{n:'Bridges',s:PS(['Short bridges|1x10|2x25|3x50','Straight bridges|1x10|2x20|3x40','Angled bridges|1x8|2x15|3x30','Head bridges|1x8|2x15|2x25','Half bridges|1x8|2x15|2x20','Full bridges|1x6|2x10|2x15','Wall-down bridges|1x3|2x6|2x10','Wall-up bridges|1x2|2x4|2x8','Closing bridges|1x1|2x3|2x6','Stand-to-stand bridges|1x1|2x3|2x10'])},
+hs:{n:'Handstand pushups',s:PS(['Wall headstands|1x30|1x60|1x120','Crow stands|1x10|1x30|1x60','Wall handstand pushups|1x5|2x10|2x20','Half handstand pushups|1x5|2x10|2x20','Handstand pushups|1x5|2x10|2x15','Close handstand pushups|1x5|2x9|2x12','Uneven handstand pushups (each side)|1x5|2x8|2x10','Half one-arm handstand pushups (each side)|1x4|2x6|2x8','Lever handstand pushups (each side)|1x3|2x4|2x6','One-arm handstand pushups (each side)|1x1|2x2|1x5'])}
+};
+function PS(a){return a.map(function(t){var p=t.split('|');function r(x){var y=x.split('x');return[+y[0],+y[1]]}return[p[0],r(p[1]),r(p[2]),r(p[3])]})}
+function fs(a){return a[0]+'\u00d7'+a[1]}
+function std(e){var c=e.key&&CC[e.key];return c&&e.step?c.s[e.step-1]:null}
+function unitOf(e){return e.key=='hs'&&e.step<=2?'seconds':'reps'}
+function meets(s,st){var a=s.slice().sort(function(x,y){return y-x});return a[st[0]-1]>=st[1]}
+function levels(e){
+  var st=std(e),out=e.logs.map(function(l){var lv=1;if(st){if(meets(l.s,st[3]))lv=3;else if(meets(l.s,st[2]))lv=2}return lv});
+  if(st&&(e.step==5||e.step==10)){var f=out.indexOf(3);if(f>=0)out[f]=4}
+  return out;
+}
+var uid=0;function nid(p){return p+Date.now().toString(36)+(uid++)}
+function norm(t){return t.toLowerCase().replace(/[^a-z]/g,'')}
+function setStep(catId,step){
+  var c=C(catId);if(!c||!c.key)return;
+  S.ex=S.ex.filter(function(e){return!(e.cat==catId&&e.key&&e.step!=step&&!e.logs.length)});
+  S.ex.forEach(function(e){if(e.cat==catId&&e.key&&e.step!=step)e.done=true});
+  var t=S.ex.filter(function(e){return e.cat==catId&&e.key&&e.step==step})[0];
+  if(!t){t={id:nid('e'),cat:catId,key:c.key,step:step,name:CC[c.key].s[step-1][0],done:false,logs:[]};S.ex.push(t)}else t.done=false;
+  sel=t.id;selCat=catId;
+}
+function initCC(){
+  S.seen=S.seen||{};
+  Object.keys(CC).forEach(function(k){
+    var c=S.cats.filter(function(x){return x.key==k})[0]||S.cats.filter(function(x){return!x.key&&norm(x.name)==norm(CC[k].n)})[0];
+    if(!c)return;
+    c.key=k;
+    S.ex.forEach(function(e){if(e.cat==c.id&&!e.key){var i=CC[k].s.findIndex(function(x){return norm(x[0])==norm(e.name)});if(i>=0){e.key=k;e.step=i+1}}});
+  });
+  if(!S.v){S.v=2;S.ex=S.ex.filter(function(e){return!(e.key&&!e.logs.length)});S.cats=S.cats.filter(function(c){return!(c.key&&!S.ex.some(function(e){return e.cat==c.id}))})}
+  save();
+}
+function changeStep(catId){
+  var c=C(catId);if(!c||!c.key)return;
+  var cur=S.ex.filter(function(e){return e.cat==catId&&e.key&&!e.done})[0];
+  dlg({title:'Change step: '+c.name,opts:CC[c.key].s.map(function(x,i){return[i+1,'Step '+(i+1)+' \u00b7 '+x[0]]}),optSel:cur?cur.step:1,ok:'Switch',cb:function(v,cc,st){setStep(catId,+st)}});
+}
+function addCC(){
+  dlg({title:'Add Convict Conditioning exercise',opts:Object.keys(CC).map(function(k){return[k,CC[k].n]}),optLabel:'Category',optSel:'pu',ok:'Next',cb:function(v,c,k){pickStep(k)}});
+}
+function pickStep(k){
+  var ex=S.cats.filter(function(x){return x.key==k})[0],cur=ex&&S.ex.filter(function(e){return e.cat==ex.id&&e.key&&!e.done})[0];
+  dlg({title:CC[k].n+': choose step',opts:CC[k].s.map(function(x,i){return[i+1,'Step '+(i+1)+' \u00b7 '+x[0]]}),optLabel:'Step',optSel:cur?cur.step:1,ok:'Add',cb:function(v,c,st){var cat=S.cats.filter(function(x){return x.key==k})[0];if(!cat){cat={id:nid('c'),name:CC[k].n,key:k};S.cats.push(cat)}setStep(cat.id,+st)}});
+}
+$('addCC').onclick=addCC;
+var _exMenu=exMenu;exMenu=function(id){var a=_exMenu(id),e=E(id);if(e&&e.key)a.unshift({l:'Change step',fn:function(){changeStep(e.cat)}});return a};
+var _catMenu=catMenu;catMenu=function(id){var a=_catMenu(id),c=C(id);if(c&&c.key)a.unshift({l:'Change step',fn:function(){changeStep(id)}});return a};
+initCC();
 $('dt').value=today();
 render();
 </script>
